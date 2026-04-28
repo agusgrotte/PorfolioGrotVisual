@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GROT VISUAL - Portfolio IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F5F1E8;
+            color: #0A0A0A;
+        }
+        
+        .script {
+            font-family: 'Shadows Into Light', cursive;
+        }
+        
+        .section-padding {
+            padding: 80px 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .section-padding {
+                padding: 120px 60px;
+            }
+        }
+        
+        .ultra-bold {
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 0.9;
+        }
+        
+        .asterisk {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+        
+        .project-card {
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .bg-cream {
+            background: #F5F1E8;
+        }
+        
+        .bg-dark {
+            background: #0A0A0A;
+        }
+        
+        .text-dark {
+            color: #0A0A0A;
+        }
+        
+        .border-dark {
+            border-color: #0A0A0A;
+        }
+        
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .logo-container {
+            background: #0A0A0A;
+            padding: 40px;
+            display: inline-block;
+        }
+        
+        .logo-text {
+            color: white;
+            font-weight: 900;
+            font-size: 3rem;
+            letter-spacing: 0.1em;
+            line-height: 1;
+            text-align: center;
+        }
+        
+        .logo-subtitle {
+            color: white;
+            font-size: 1.2rem;
+            letter-spacing: 0.3em;
+            text-align: center;
+            margin-top: 10px;
+            border-top: 2px solid white;
+            border-bottom: 2px solid white;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full bg-cream z-50 border-b border-dark">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="ultra-bold text-2xl">GROT VISUAL</div>
+            <div class="text-sm">info@grotvisual.com</div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="section-padding mt-16 min-h-screen flex items-center justify-center relative overflow-hidden">
+        <!-- Video Background -->
+        <video 
+            autoplay 
+            loop 
+            muted 
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover"
+            style="filter: brightness(0.4);"
+        >
+            <source src="hero-video.mp4" type="video/mp4">
+        </video>
+        
+        <!-- Overlay oscuro -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        
+        <!-- Contenido -->
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <!-- Logo -->
+            <div class="logo-container mx-auto mb-12">
+                <div class="logo-text">GROT</div>
+                <div class="logo-subtitle">VISUAL</div>
+            </div>
+            
+            <p class="script text-4xl md:text-6xl mb-8 text-white">IA que transforma marcas</p>
+            <p class="text-xl max-w-2xl mx-auto text-white">
+                Contenido profesional para Instagram generado 100% con Inteligencia Artificial
+            </p>
+        </div>
+    </section>
+
+    <!-- INTRODUCTION -->
+    <section class="section-padding bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="ultra-bold text-5xl mb-4 flex items-center gap-4">
+                        ABOUT US <span class="asterisk">*</span>
+                    </h2>
+                    <p class="script text-3xl mb-6">Creamos contenido que conecta</p>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Somos una agencia especializada en creación de contenido para redes sociales 
+                        utilizando inteligencia artificial de última generación.
+                    </p>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Desde fotografía hiperrealista hasta estrategias completas de contenido, 
+                        transformamos la presencia digital de marcas con soluciones escalables y profesionales.
+                    </p>
+                    <p class="text-lg leading-relaxed">
+                        Cada proyecto está diseñado para generar engagement real, aumentar alcance 
+                        y crear narrativas visuales unforgettable.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-200 aspect-square"></div>
+                    <div class="bg-gray-200 aspect-square"></div>
+                    <div class="bg-gray-200 aspect-square"></div>
+                    <div class="bg-gray-200 aspect-square"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR SERVICES -->
+    <section class="section-padding bg-cream">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="ultra-bold text-5xl mb-12 flex items-center gap-4">
+                OUR SERVICES <span class="asterisk">*</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 border-2 border-dark">
+                    <p class="script text-2xl mb-4">Contenido IA</p>
+                    <h3 class="ultra-bold text-3xl mb-6">Instagram 360°</h3>
+                    <ul class="space-y-3 text-lg">
+                        <li><strong>Feed Posts:</strong> Fotografía hiperrealista de producto</li>
+                        <li><strong>Carruseles:</strong> Contenido educativo y storytelling</li>
+                        <li><strong>Reels:</strong> Videos virales y transiciones</li>
+                        <li><strong>Stories:</strong> Interacción y engagement</li>
+                        <li><strong>UGC:</strong> Testimonios auténticos</li>
+                    </ul>
+                </div>
+                <div class="bg-dark text-white p-8 border-2 border-dark">
+                    <p class="script text-2xl mb-4">Soluciones</p>
+                    <h3 class="ultra-bold text-3xl mb-6">Empresariales</h3>
+                    <ul class="space-y-3 text-lg">
+                        <li><strong>Automatización:</strong> Procesos optimizados con IA</li>
+                        <li><strong>Chatbots:</strong> Atención al cliente 24/7</li>
+                        <li><strong>Analytics:</strong> Dashboards y reportes automatizados</li>
+                        <li><strong>Sistemas:</strong> Soluciones contables inteligentes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section-padding bg-white">
+        <div class="max-w-6xl mx-auto">
+            <!-- PROJECT 01: VERO STUDIO -->
+            <div class="mb-24">
+                <div class="mb-8">
+                    <h3 class="ultra-bold text-6xl mb-2 flex items-center gap-4">
+                        PROJECT 01 <span class="asterisk">*</span>
+                    </h3>
+                    <p class="script text-4xl">VERO Studio</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <!-- Aquí irían las imágenes reales de VERO -->
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EVERO Studio%3C/text%3E%3C/svg%3E" alt="VERO Studio - Flat Lay">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3ECarrusel%3C/text%3E%3C/svg%3E" alt="VERO Studio - Carrusel">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EUGC%3C/text%3E%3C/svg%3E" alt="VERO Studio - UGC">
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-lg leading-relaxed mb-4">
+                            Estrategia completa de contenido para tienda de ropa minimalista. 
+                            Fotografía 100% generada por IA que se ve natural y profesional.
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            Incluye flat lays, carruseles educativos, reels de transición, 
+                            stories interactivas y UGC auténtico.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Feed Posts</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Carruseles</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Reels</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Stories</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">UGC</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Close-ups</span>
+                        </div>
+                        <div class="bg-cream p-4">
+                            <p class="text-sm font-bold mb-2">RESULTADOS PROYECTADOS:</p>
+                            <p class="text-sm">• Engagement: 4.8%</p>
+                            <p class="text-sm">• Alcance mensual: 45,000 cuentas</p>
+                            <p class="text-sm">• Guardados: 1,200+/mes</p>
+                            <p class="text-sm">• Nuevos seguidores: 800-1,200/mes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROJECT 02: LÚMINA HOME -->
+            <div class="mb-24">
+                <div class="mb-8">
+                    <h3 class="ultra-bold text-6xl mb-2 flex items-center gap-4">
+                        PROJECT 02 <span class="asterisk">*</span>
+                    </h3>
+                    <p class="script text-4xl">Lúmina Home</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3ELúmina Home%3C/text%3E%3C/svg%3E" alt="Lúmina Home">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EAmbientes%3C/text%3E%3C/svg%3E" alt="Lúmina Home - Ambientes">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EAntes/Después%3C/text%3E%3C/svg%3E" alt="Lúmina Home - Transformación">
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-lg leading-relaxed mb-4">
+                            Marca de lámparas elegantes con enfoque en transformación de espacios 
+                            y creación de ambientes acogedores.
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            Contenido warm y aspiracional que muestra el poder de la iluminación 
+                            correcta en el hogar.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Iluminación</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Lifestyle</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Producto</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Antes/Después</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Guías</span>
+                        </div>
+                        <div class="bg-cream p-4">
+                            <p class="text-sm font-bold mb-2">RESULTADOS PROYECTADOS:</p>
+                            <p class="text-sm">• Engagement: 5.2%</p>
+                            <p class="text-sm">• Alcance mensual: 38,000 cuentas</p>
+                            <p class="text-sm">• Guardados: 950+/mes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROJECT 03: FORJA STEEL -->
+            <div class="mb-24">
+                <div class="mb-8">
+                    <h3 class="ultra-bold text-6xl mb-2 flex items-center gap-4">
+                        PROJECT 03 <span class="asterisk">*</span>
+                    </h3>
+                    <p class="script text-4xl">Forja Steel</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EForja Steel%3C/text%3E%3C/svg%3E" alt="Forja Steel">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EPremium%3C/text%3E%3C/svg%3E" alt="Forja Steel - Premium">
+                    </div>
+                    <div class="aspect-square overflow-hidden">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5f5f0' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%238b7355'%3EArtesanal%3C/text%3E%3C/svg%3E" alt="Forja Steel - Artesanal">
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-lg leading-relaxed mb-4">
+                            Cuchillos premium profesionales con estética dark industrial. 
+                            Contenido enfocado en calidad artesanal y demos de producto.
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            Fotografía macro de detalles, videos de corte en acción y 
+                            storytelling sobre el proceso de fabricación.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Premium</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Industrial</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Demo</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Artesanal</span>
+                            <span class="px-4 py-2 bg-dark text-white text-sm">Detalles</span>
+                        </div>
+                        <div class="bg-cream p-4">
+                            <p class="text-sm font-bold mb-2">EN DESARROLLO</p>
+                            <p class="text-sm">Próximamente</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR PROCESS -->
+    <section class="section-padding bg-dark text-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="ultra-bold text-5xl mb-12 flex items-center gap-4">
+                OUR PROCESS <span class="asterisk">*</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="ultra-bold text-3xl mb-6">01. ESTRATEGIA</h3>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Analizamos tu marca, audiencia y objetivos para crear una estrategia 
+                        de contenido personalizada.
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Brief detallado y análisis de competencia</li>
+                        <li>• Definición de pilares de contenido</li>
+                        <li>• Calendario editorial mensual</li>
+                        <li>• KPIs y métricas de éxito</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="ultra-bold text-3xl mb-6">02. PRODUCCIÓN</h3>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Generamos todo el contenido usando IA de última generación, 
+                        garantizando calidad profesional y consistencia visual.
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Freepik AI para fotografía hiperrealista</li>
+                        <li>• Claude AI para copy y captions</li>
+                        <li>• Canva para diseño de posts</li>
+                        <li>• Edición y optimización final</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section-padding bg-dark text-white border-t border-white">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="ultra-bold text-6xl md:text-8xl mb-4">LET'S</h2>
+            <p class="script text-5xl md:text-7xl mb-12">Work</p>
+            <h2 class="ultra-bold text-6xl md:text-8xl mb-12">TOGETHER</h2>
+            
+            <div class="flex justify-center gap-8 mb-12">
+                <a href="https://instagram.com/grotvisual" target="_blank" class="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition">
+                    IG
+                </a>
+                <a href="#" class="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition">
+                    IN
+                </a>
+                <a href="mailto:info@grotvisual.com" class="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition">
+                    @
+                </a>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-xl">📧 info@grotvisual.com</p>
+                <p class="text-xl">📱 Contacto por Instagram</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white border-t border-white py-8">
+        <div class="max-w-6xl mx-auto px-6 text-center text-sm">
+            <p>© 2025 GROT VISUAL. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
