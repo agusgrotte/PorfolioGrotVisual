@@ -1,0 +1,640 @@
+<html lang="es" style="scroll-behavior: smooth;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROT VISUAL — IA que transforma marcas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./GROT VISUAL — IA que transforma marcas_files/css2" rel="stylesheet">
+<script src="./GROT VISUAL — IA que transforma marcas_files/saved_resource"></script>
+<script src="./GROT VISUAL — IA que transforma marcas_files/gsap.min.js.descarga"></script>
+<script src="./GROT VISUAL — IA que transforma marcas_files/ScrollTrigger.min.js.descarga"></script>
+<script src="./GROT VISUAL — IA que transforma marcas_files/three.min.js.descarga"></script>
+<style>
+  :root{
+    --cream:#F2EDE2;
+    --ink:#0A0A0A;
+    --accent:#FF3B1F;
+    --soft:#E8E1D2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;width:100%}
+  body{cursor:none}
+  ::selection{background:var(--ink);color:var(--cream)}
+
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.13;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;border-radius:50%;mix-blend-mode:difference;opacity:0;transition:opacity .25s}
+  .cursor-dot.is-active,.cursor-ring.is-active{opacity:1}
+  .cursor-dot{width:6px;height:6px;background:#fff;transform:translate3d(-100px,-100px,0)}
+  .cursor-ring{width:40px;height:40px;border:1px solid #fff;transform:translate3d(-100px,-100px,0);transition:width .25s,height .25s,background .25s,opacity .25s}
+  .cursor-ring.hover{width:80px;height:80px;background:rgba(255,255,255,.1)}
+
+  .display{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.05em;line-height:.85}
+  .serif{font-family:'Instrument Serif',serif;font-style:italic;letter-spacing:-.02em}
+  .script{font-family:'Shadows Into Light',cursive}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.05em;text-transform:uppercase;font-size:.7rem}
+
+  .hero{position:relative;min-height:100vh;background:#0A0A0A;color:#fff;overflow:hidden;padding-top:80px}
+  #webgl{position:absolute;inset:0;z-index:1;width:100%;height:100%}
+  .hero-overlay{position:relative;z-index:2}
+  .hero-title{font-size:clamp(3.6rem,14vw,15rem);font-weight:900;letter-spacing:-.06em;line-height:.82}
+  .hero-title .word{display:inline-block;overflow:hidden;vertical-align:bottom}
+  .hero-title .word span{display:inline-block;transform:translateY(110%);will-change:transform}
+  .hero-tagline{font-family:'Shadows Into Light',cursive;font-size:clamp(1.8rem,5vw,3.5rem);line-height:1;color:#fff;opacity:0;transform:translateY(20px)}
+
+  .marquee{overflow:hidden;border-top:1px solid currentColor;border-bottom:1px solid currentColor;padding:16px 0;background:var(--ink);color:var(--cream)}
+  .marquee-track{display:inline-flex;white-space:nowrap;animation:scroll 30s linear infinite;gap:50px;will-change:transform}
+  .marquee-track span{font-weight:900;font-size:clamp(1.6rem,4vw,3rem);letter-spacing:-.04em;display:inline-flex;align-items:center;gap:50px}
+  .marquee-track .star{color:var(--accent);font-size:.8em}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  .project-img{position:relative;overflow:hidden;background:#1a1a1a}
+  .project-img img,.project-img video{display:block;width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+  .project-img:hover img,.project-img:hover video{transform:scale(1.05)}
+  .project-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.5) 100%);opacity:0;transition:opacity .4s;pointer-events:none}
+  .project-img:hover::after{opacity:1}
+  .project-img .caption{position:absolute;left:14px;bottom:14px;z-index:2;color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s;font-family:ui-monospace,monospace}
+  .project-img:hover .caption{opacity:1;transform:translateY(0)}
+
+  .magnetic{display:inline-block;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .btn-primary{position:relative;display:inline-flex;align-items:center;gap:14px;padding:18px 28px;background:#fff;color:#000;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;font-size:.85rem;border-radius:999px;overflow:hidden;text-decoration:none}
+  @media (min-width:768px){.btn-primary{padding:22px 36px;font-size:.95rem}}
+  .btn-primary::before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateY(101%);transition:transform .5s cubic-bezier(.7,0,.2,1);border-radius:999px}
+  .btn-primary:hover::before{transform:translateY(0)}
+  .btn-primary span{position:relative;z-index:2;transition:color .3s}
+  .btn-primary:hover span:not(.arrow){color:#fff}
+  .btn-primary .arrow{position:relative;z-index:2;width:24px;height:24px;border-radius:50%;background:#000;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;transition:background .3s,color .3s}
+  .btn-primary:hover .arrow{background:#fff;color:#000}
+
+  .ticker-row{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--cream);padding:24px 0}
+  @media (min-width:768px){.ticker-row{flex-direction:row;justify-content:space-between;align-items:baseline;gap:24px;padding:32px 0}}
+  .ticker-row:last-child{border-bottom:1px solid var(--cream)}
+
+  .giant{font-size:clamp(3.5rem,16vw,18rem);font-weight:900;letter-spacing:-.07em;line-height:.78}
+
+  .sec{padding:90px 22px}
+  @media (min-width:768px){.sec{padding:140px 40px}}
+  @media (min-width:1280px){.sec{padding:140px 60px}}
+
+  nav.top{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--cream);border-bottom:1px solid rgba(242,237,226,.1)}
+  nav.top .inner{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;max-width:1400px;margin:0 auto;gap:16px}
+  @media (min-width:768px){nav.top .inner{padding:18px 40px}}
+  nav.top a{color:inherit;text-decoration:none}
+  .nav-mid{display:none}
+  @media (min-width:900px){.nav-mid{display:flex;gap:28px}}
+  .nav-cta{display:none}
+  @media (min-width:600px){.nav-cta{display:block;font-size:.7rem}}
+
+  .pill{display:inline-flex;align-items:center;padding:8px 14px;border:1px solid var(--ink);border-radius:999px;font-size:.7rem;font-weight:600;letter-spacing:.02em;background:transparent;transition:background .3s,color .3s;text-transform:uppercase}
+  .pill:hover{background:var(--ink);color:var(--cream)}
+
+  .blob{position:absolute;width:60vw;height:60vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(80px);opacity:.55;mix-blend-mode:screen;pointer-events:none}
+
+  .pn{font-size:clamp(6rem,16vw,16rem);font-weight:900;line-height:.8;letter-spacing:-.07em;color:var(--ink);opacity:.06;position:absolute;top:-20px;right:-10px;pointer-events:none;user-select:none}
+
+  .stat-num{font-size:clamp(3rem,8vw,7rem);font-weight:900;letter-spacing:-.05em;line-height:.85}
+
+  .svc-card{background:var(--cream);color:var(--ink);padding:32px;border-radius:24px;height:100%;display:flex;flex-direction:column;gap:20px}
+  .svc-card.dark{background:var(--ink);color:var(--cream);border:1px solid rgba(242,237,226,.15)}
+  .svc-card ul{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+  .svc-card li{display:flex;gap:14px;align-items:flex-start;font-size:.95rem;line-height:1.5}
+  .svc-card li::before{content:"";display:inline-block;width:8px;height:8px;background:var(--accent);border-radius:50%;margin-top:8px;flex-shrink:0}
+
+  .process-card{position:relative;padding:32px 0;border-top:1px solid rgba(10,10,10,.15)}
+
+  /* Block label between project sub-sections */
+  .block-label{display:flex;align-items:end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+  .block-label h4{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.04em;line-height:1;font-size:clamp(1.6rem,4vw,2.6rem)}
+  .block-num{font-family:ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;opacity:.6;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+
+  /* Reels */
+  .reel-card{position:relative;overflow:hidden;background:#0A0A0A;border-radius:0}
+  .reel-card video{display:block;width:100%;height:100%;object-fit:cover}
+  .reel-badge{position:absolute;top:14px;left:14px;z-index:2;color:#fff;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);padding:6px 12px;border-radius:999px;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-family:ui-monospace,monospace}
+
+  @media (hover:none),(pointer:coarse){
+    body{cursor:auto}
+    .cursor-dot,.cursor-ring{display:none!important}
+  }
+
+  footer{background:var(--ink);color:var(--cream);border-top:1px solid rgba(242,237,226,.15);padding:24px 22px}
+  @media (min-width:768px){footer{padding:30px 40px}}
+
+  .logo-star{color:var(--accent);display:inline-block}
+
+  /* IG-style frame for stories */
+  .story-frame{position:relative}
+  .story-frame::before{content:"";position:absolute;top:10px;left:10px;right:10px;height:3px;background:linear-gradient(90deg,#fff 60%,rgba(255,255,255,.3) 60%);border-radius:2px;z-index:3;pointer-events:none}
+</style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.relative{position:relative}.z-10{z-index:10}.col-span-2{grid-column:span 2 / span 2}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-16{margin-bottom:4rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-12{margin-top:3rem}.mt-16{margin-top:4rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.aspect-\[3\/4\]{aspect-ratio:3/4}.aspect-\[4\/3\]{aspect-ratio:4/3}.aspect-\[4\/5\]{aspect-ratio:4/5}.aspect-\[9\/16\]{aspect-ratio:9/16}.min-h-screen{min-height:100vh}.max-w-4xl{max-width:56rem}.max-w-\[1400px\]{max-width:1400px}.max-w-xl{max-width:36rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-10{gap:2.5rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-12{column-gap:3rem}.gap-y-10{row-gap:2.5rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.border-t{border-top-width:1px}.border-black{--tw-border-opacity:1;border-color:rgb(0 0 0 / var(--tw-border-opacity, 1))}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.pb-20{padding-bottom:5rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[clamp\(2\.2rem\2c 7vw\2c 6rem\)\]{font-size:clamp(2.2rem,7vw,6rem)}.text-\[clamp\(2\.5rem\2c 8vw\2c 8rem\)\]{font-size:clamp(2.5rem,8vw,8rem)}.text-\[clamp\(2\.5rem\2c 9vw\2c 9rem\)\]{font-size:clamp(2.5rem,9vw,9rem)}.text-\[clamp\(3rem\2c 14vw\2c 14rem\)\]{font-size:clamp(3rem,14vw,14rem)}.text-\[clamp\(3rem\2c 7vw\2c 6rem\)\]{font-size:clamp(3rem,7vw,6rem)}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.opacity-50{opacity:0.5}.opacity-60{opacity:0.6}.opacity-70{opacity:0.7}.opacity-80{opacity:0.8}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:opacity-100:hover{opacity:1}@media (min-width: 640px){.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 768px){.md\:col-span-1{grid-column:span 1 / span 1}.md\:col-span-2{grid-column:span 2 / span 2}.md\:col-span-5{grid-column:span 5 / span 5}.md\:col-span-7{grid-column:span 7 / span 7}.md\:mb-14{margin-bottom:3.5rem}.md\:mb-16{margin-bottom:4rem}.md\:mb-20{margin-bottom:5rem}.md\:mb-24{margin-bottom:6rem}.md\:mt-10{margin-top:2.5rem}.md\:mt-16{margin-top:4rem}.md\:mt-24{margin-top:6rem}.md\:flex{display:flex}.md\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:gap-12{gap:3rem}.md\:gap-4{gap:1rem}.md\:gap-6{gap:1.5rem}.md\:gap-y-16{row-gap:4rem}.md\:p-10{padding:2.5rem}.md\:px-16{padding-left:4rem;padding-right:4rem}.md\:pb-32{padding-bottom:8rem}.md\:text-left{text-align:left}.md\:text-right{text-align:right}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-4xl{font-size:2.25rem;line-height:2.5rem}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 1024px){.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:col-span-8{grid-column:span 8 / span 8}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:gap-10{gap:2.5rem}.lg\:gap-16{gap:4rem}}</style></head>
+<body style="">
+
+<div class="grain"></div>
+<div class="cursor-ring is-active hover" id="cursorRing" style="transform: translate3d(119px, 448px, 0px) translate(-50%, -50%);"></div>
+<div class="cursor-dot is-active" id="cursorDot" style="transform: translate3d(119px, 448px, 0px) translate(-50%, -50%);"></div>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="inner">
+    <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#top" class="display text-base sm:text-xl tracking-tight">GROT<span class="logo-star">*</span>VISUAL</a>
+    <div class="nav-mid mono">
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#about">ABOUT</a>
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#services">SERVICES</a>
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#projects">WORK</a>
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#process">PROCESS</a>
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#contact">CONTACT</a>
+    </div>
+    <div class="mono nav-cta opacity-80">info@grotvisual.com</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="top" class="hero">
+  <canvas id="webgl" width="1905" height="999"></canvas>
+  <div class="blob" style="background:#FF3B1F;top:-15vw;left:-15vw"></div>
+  <div class="blob" style="background:#3D5AFE;bottom:-20vw;right:-15vw"></div>
+
+  <div class="hero-overlay min-h-screen flex flex-col justify-end pb-20 md:pb-32 px-6 md:px-16 max-w-[1400px] mx-auto">
+    <div class="mono mb-5 opacity-70">[ AI CREATIVE STUDIO ]</div>
+    <h1 class="hero-title">
+      <div class="word"><span data-anim="hero" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0%);">GROT</span></div><br>
+      <div class="word"><span data-anim="hero" class="serif" style="font-weight: 400; translate: none; rotate: none; scale: none; transform: translate(0px, 0%);">visual.</span></div>
+    </h1>
+    <p class="hero-tagline mt-6" data-fade="" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">IA que transforma marcas</p>
+    <p class="mt-6 max-w-xl text-base md:text-lg opacity-80 leading-relaxed" data-fade="" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+      Contenido profesional para Instagram generado <span class="serif text-xl">100% con Inteligencia Artificial</span>.
+    </p>
+    <div class="mt-8 md:mt-10 flex flex-wrap items-center gap-4" data-fade="" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#projects" class="magnetic"><span class="btn-primary"><span>Ver el caso</span><span class="arrow">→</span></span></a>
+      <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#contact" class="mono opacity-70 hover:opacity-100 transition" style="text-decoration:underline;text-underline-offset:6px">o contactanos →</a>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>FOTOGRAFÍA IA <span class="star">✦</span></span>
+    <span>CONTENIDO 360° <span class="star">✦</span></span>
+    <span>CARRUSELES <span class="star">✦</span></span>
+    <span>REELS <span class="star">✦</span></span>
+    <span>UGC <span class="star">✦</span></span>
+    <span>STORIES <span class="star">✦</span></span>
+    <span>UNBOXING <span class="star">✦</span></span>
+    <span>FOTOGRAFÍA IA <span class="star">✦</span></span>
+    <span>CONTENIDO 360° <span class="star">✦</span></span>
+    <span>CARRUSELES <span class="star">✦</span></span>
+    <span>REELS <span class="star">✦</span></span>
+    <span>UGC <span class="star">✦</span></span>
+    <span>STORIES <span class="star">✦</span></span>
+    <span>UNBOXING <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="sec">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="mono mb-10 md:mb-14 flex items-center gap-3"><span style="color:var(--accent)">✦</span> 01 / ABOUT US</div>
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+      <div class="lg:col-span-7">
+        <h2 class="display text-[clamp(2.2rem,7vw,6rem)] mb-6 reveal" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+          Creamos<br>
+          <span class="serif">contenido</span><br>
+          que conecta.
+        </h2>
+        <p class="script text-2xl md:text-3xl mt-4 mb-8" style="color:var(--accent)">— hello, somos GROT VISUAL.</p>
+      </div>
+      <div class="lg:col-span-5 space-y-5 text-base md:text-lg leading-relaxed">
+        <p>Somos una agencia especializada en creación de contenido para redes sociales utilizando <em class="serif text-xl">inteligencia artificial</em> de última generación.</p>
+        <p>Desde fotografía hiperrealista hasta estrategias completas de contenido, transformamos la presencia digital de marcas con soluciones escalables y profesionales.</p>
+        <p>Cada proyecto está diseñado para generar <strong>engagement real</strong>, aumentar alcance y crear narrativas visuales <em class="serif text-xl">unforgettable</em>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="sec" style="background:var(--ink);color:var(--cream)">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="mono mb-10 md:mb-14 flex items-center gap-3 opacity-80"><span style="color:var(--accent)">✦</span> 02 / OUR SERVICES</div>
+    <h2 class="display text-[clamp(2.5rem,8vw,8rem)] mb-12 md:mb-20">
+      Lo que<br>
+      <span class="serif" style="color:var(--accent)">hacemos.</span>
+    </h2>
+
+    <div class="grid lg:grid-cols-2 gap-6 mb-16 md:mb-24">
+      <div class="svc-card" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+        <div class="script text-2xl" style="color:var(--accent)">Servicio 01</div>
+        <h3 class="display text-3xl md:text-4xl">Contenido IA<br>Instagram 360°</h3>
+        <ul>
+          <li><span><strong>Feed Posts</strong> — Fotografía hiperrealista de producto.</span></li>
+          <li><span><strong>Carruseles</strong> — Contenido educativo y storytelling.</span></li>
+          <li><span><strong>Reels</strong> — Videos virales y transiciones.</span></li>
+          <li><span><strong>Stories</strong> — Interacción y engagement.</span></li>
+          <li><span><strong>UGC</strong> — Testimonios auténticos.</span></li>
+        </ul>
+      </div>
+      <div class="svc-card dark" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+        <div class="script text-2xl" style="color:var(--accent)">Servicio 02</div>
+        <h3 class="display text-3xl md:text-4xl">Soluciones<br>Empresariales</h3>
+        <ul>
+          <li><span><strong>Automatización</strong> — Procesos optimizados con IA.</span></li>
+          <li><span><strong>Chatbots</strong> — Atención al cliente 24/7.</span></li>
+          <li><span><strong>Analytics</strong> — Dashboards y reportes automatizados.</span></li>
+          <li><span><strong>Sistemas</strong> — Soluciones contables inteligentes.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="ticker-row">
+        <div class="flex items-baseline gap-4 md:gap-6" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="mono opacity-60">001</span><span class="display text-2xl md:text-4xl">Fotografía hiperrealista IA</span></div>
+        <span class="serif text-lg md:text-xl opacity-70" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0.7;">producto · lifestyle · editorial</span>
+      </div>
+      <div class="ticker-row">
+        <div class="flex items-baseline gap-4 md:gap-6" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="mono opacity-60">002</span><span class="display text-2xl md:text-4xl">Carruseles &amp; Reels</span></div>
+        <span class="serif text-lg md:text-xl opacity-70" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0.7;">storytelling visual</span>
+      </div>
+      <div class="ticker-row">
+        <div class="flex items-baseline gap-4 md:gap-6" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="mono opacity-60">003</span><span class="display text-2xl md:text-4xl">Stories &amp; UGC</span></div>
+        <span class="serif text-lg md:text-xl opacity-70" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0.7;">interacción · testimonios</span>
+      </div>
+      <div class="ticker-row">
+        <div class="flex items-baseline gap-4 md:gap-6" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="mono opacity-60">004</span><span class="display text-2xl md:text-4xl">Automatización &amp; sistemas IA</span></div>
+        <span class="serif text-lg md:text-xl opacity-70" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0.7;">chatbots · dashboards</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE CASE: VERO STUDIO -->
+<section id="projects" class="sec">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="mono mb-10 md:mb-14 flex items-center gap-3"><span style="color:var(--accent)">✦</span> 03 / FEATURED CASE</div>
+
+    <article class="relative">
+      <div class="pn" style="translate: none; rotate: none; scale: none; transform: translate(0px, -100px);">01</div>
+
+      <!-- Project intro -->
+      <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-end mb-10 md:mb-14">
+        <div class="lg:col-span-8">
+          <div class="mono mb-3 opacity-60">CASE STUDY — VERO STUDIO</div>
+          <h3 class="display text-[clamp(2.5rem,9vw,9rem)]">
+            VERO<br><span class="serif">studio.</span>
+          </h3>
+          <p class="script text-2xl md:text-3xl mt-4" style="color:var(--accent)">Moda minimalista · Camisa blanca</p>
+        </div>
+        <div class="lg:col-span-4 text-base leading-relaxed space-y-3">
+          <p>Marca de ropa minimalista enfocada en esenciales atemporales. Estética clean con paleta beige/blanco.</p>
+          <p>Material 100% generado con IA: feed, carruseles, stories, UGC, unboxing y reels — todo el ecosistema visual de marca.</p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="pill">Minimalista</span><span class="pill">Fashion</span><span class="pill">Carrusel</span><span class="pill">Reels</span><span class="pill">Stories</span><span class="pill">UGC</span><span class="pill">Unboxing</span><span class="pill">Close-ups</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO IMAGES — set the brand mood -->
+      <div class="grid grid-cols-2 lg:grid-cols-12 gap-3 mb-16 md:mb-24">
+        <div class="col-span-2 lg:col-span-7 project-img aspect-[4/3]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+          <img src="./portada.jpg" alt="VERO Studio — flat lay outfit" loading="lazy">
+          <span class="caption">FLAT LAY · CAMPAÑA</span>
+        </div>
+        <div class="lg:col-span-5 project-img aspect-[3/4]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+          <img src="freepik_la-img1-tiene-que-tener-b_2879987047.png" alt="VERO — camisa de lino" loading="lazy">
+          <span class="caption">PRODUCTO · LINEN</span>
+        </div>
+      </div>
+
+      <!-- ============ 01. CARRUSEL ============ -->
+      <div class="mt-8 mb-16 md:mb-24">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 01 — CARRUSEL EDITORIAL</div>
+            <h4>4 formas de usar <span class="serif opacity-70">una camisa blanca</span></h4>
+          </div>
+          <p class="mono opacity-50">5 SLIDES · 4:5 · INSTAGRAM</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./portada carru.png" alt="Cover · 4 formas de usar una camisa blanca" loading="lazy"><span class="caption">SLIDE 01 · COVER</span></div>
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./carr.png" alt="Look nocturno" loading="lazy"><span class="caption">SLIDE 02 · NOCHE</span></div>
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./carrr.png" alt="Look de trabajo" loading="lazy"><span class="caption">SLIDE 03 · OFICINA</span></div>
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./cart.png" alt="Look weekend" loading="lazy"><span class="caption">SLIDE 04 · WEEKEND</span></div>
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./carrrrr.png" alt="Look casual" loading="lazy"><span class="caption">SLIDE 05 · CASUAL</span></div>
+        </div>
+      </div>
+
+      <!-- ============ 02. REELS ============ -->
+      <div class="mb-16 md:mb-24">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 02 — REELS</div>
+            <h4>Reels <span class="serif opacity-70">— en movimiento</span></h4>
+          </div>
+          <p class="mono opacity-50">9:16 · LOOP MUTED · INSTAGRAM</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div class="reel-card aspect-[9/16] project-img md:col-span-5" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="reel-badge">REEL · 01 · DESTACADO</span><video src="reels.mp4
+" autoplay="" loop="" muted="" playsinline="" preload="metadata"></video></div>
+          <div class="reel-card aspect-[9/16] project-img md:col-span-5" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><span class="reel-badge">REEL · 02 · DESTACADO</span><video src="magnific_hyperealistic-macro-video_2885618181.mp4" autoplay="" loop="" muted="" playsinline="" preload="metadata"></video></div>
+          <div class="md:col-span-2 flex flex-col justify-center bg-cream p-6" style="border:1px dashed rgba(10,10,10,.25)">
+            <div class="mono opacity-60 mb-2">FORMATO</div>
+            <p class="serif text-2xl mb-2">9:16</p>
+            <p class="text-xs leading-relaxed opacity-70">Loop nativo · optimizado para feed y reels.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 03. CLOSE-UPS PRODUCTO ============ -->
+      <div class="mb-16 md:mb-24">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 03 — CLOSE-UPS</div>
+            <h4>Fotografía producto <span class="serif opacity-70">— macro</span></h4>
+          </div>
+          <p class="mono opacity-50">DETALLE · TEXTURA · LINEN</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./foto prods.jpeg" alt="Close-up cuello camisa con tag VERO" loading="lazy"><span class="caption">CLOSE-UP · 01</span></div>
+          <div class="project-img aspect-[4/5]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./magnific_close-up-de-los-detalles-_2885602492.png" alt="Close-up cuello con etiqueta interior" loading="lazy"><span class="caption">CLOSE-UP · 02</span></div>
+        </div>
+      </div>
+
+      <!-- ============ 04. STORIES ============ -->
+      <div class="mb-16 md:mb-24">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 04 — STORIES</div>
+            <h4>Instagram Stories <span class="serif opacity-70">— interactivas</span></h4>
+          </div>
+          <p class="mono opacity-50">9:16 · POLL · QUIZ</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl">
+          <div class="project-img story-frame aspect-[9/16]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./historia 1.png" alt="Story · ¿Qué estilo sos?" loading="lazy"><span class="caption">STORY · INTRO</span></div>
+          <div class="project-img story-frame aspect-[9/16]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./histopria 2.png" alt="Story · Tu outfit perfecto incluye" loading="lazy"><span class="caption">STORY · POLL</span></div>
+        </div>
+      </div>
+
+      <!-- ============ 05. UGC MODELO ============ -->
+      <div class="mb-16 md:mb-24">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 05 — UGC MODELO</div>
+            <h4>UGC <span class="serif opacity-70">— testimonios auténticos</span></h4>
+          </div>
+          <p class="mono opacity-50">MIRROR SELFIE · VERTICAL</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="project-img aspect-[3/4] md:col-span-1" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./freepik_an-authentic-unretouched-_2879827609.jpeg" alt="UGC modelo · selfie" loading="lazy"><span class="caption">UGC · 01</span></div>
+          <div class="project-img aspect-[3/4] md:col-span-1" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><img src="./ugc caja (2).jpeg
+" alt="UGC modelo · selfie" loading="lazy"><span class="caption">UGC · 02</span></div>
+          <div class="md:col-span-1 hidden md:flex flex-col justify-center bg-cream p-8" style="border:1px dashed rgba(10,10,10,.25)">
+            <p class="serif text-3xl mb-3" style="color:var(--accent)">"</p>
+            <p class="text-base leading-relaxed mb-4">UGC generado con IA que se siente real. Personas reales, ambientes auténticos — sin sesiones de fotos, sin modelos, sin presupuestos inflados.</p>
+            <p class="mono opacity-60">— GROT VISUAL · MÉTODO</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 06. UNBOXING ============ -->
+      <div class="mb-12 md:mb-16">
+        <div class="block-label">
+          <div>
+            <div class="block-num"><span style="color:var(--accent)">✦</span> ENTREGABLE 06 — UNBOXING</div>
+            <h4>Unboxing <span class="serif opacity-70">— packaging</span></h4>
+          </div>
+          <p class="mono opacity-50">EXPERIENCIA · PRIMERA IMPRESIÓN</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div class="project-img aspect-[3/4] md:col-span-7" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;"><video src="ugc.mp4" loading="lazy" autoplay="" loop="" muted="" playsinline="" preload="metadata"></video><span class="caption">UNBOXING · 01</span></div>
+          <div class="md:col-span-5 flex flex-col justify-end p-6 md:p-10 bg-cream" style="border:1px solid var(--ink)">
+            <div class="mono opacity-60 mb-3">DETALLES</div>
+            <p class="serif text-2xl md:text-3xl mb-4">"El producto se siente premium antes de abrirlo."</p>
+            <ul class="space-y-2 text-sm md:text-base">
+              <li>· Caja kraft mate con tipografía discreta</li>
+              <li>· Tissue paper blanco con sello impreso</li>
+              <li>· Tag colgante con tipografía editorial</li>
+              <li>· Disparador para reel de unboxing nativo</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div class="border-t border-black pt-4"><div class="display text-2xl md:text-4xl mb-1">4.8<span style="color:var(--accent)">%</span></div><div class="mono opacity-60">ENGAGEMENT</div></div>
+        <div class="border-t border-black pt-4"><div class="display text-2xl md:text-4xl mb-1">45K</div><div class="mono opacity-60">ALCANCE / MES</div></div>
+        <div class="border-t border-black pt-4"><div class="display text-2xl md:text-4xl mb-1">1.2K+</div><div class="mono opacity-60">GUARDADOS / MES</div></div>
+        <div class="border-t border-black pt-4"><div class="display text-2xl md:text-4xl mb-1">+1K</div><div class="mono opacity-60">SEGUIDORES / MES</div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="sec" style="background:var(--soft)">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="mono mb-10 md:mb-14 flex items-center gap-3"><span style="color:var(--accent)">✦</span> 04 / OUR PROCESS</div>
+    <h2 class="display text-[clamp(2.5rem,8vw,8rem)] mb-12 md:mb-20">
+      Cómo<br><span class="serif">trabajamos.</span>
+    </h2>
+    <div class="grid md:grid-cols-2 gap-x-12 gap-y-10 md:gap-y-16">
+      <div class="process-card" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+        <div class="display text-[clamp(3rem,7vw,6rem)] mb-4" style="color:var(--accent)">01.</div>
+        <h3 class="display text-2xl md:text-3xl mb-4">ESTRATEGIA</h3>
+        <p class="text-base md:text-lg leading-relaxed mb-5">Analizamos tu marca, audiencia y objetivos para crear una estrategia de contenido personalizada.</p>
+        <ul class="space-y-2 text-sm md:text-base">
+          <li>· Brief detallado y análisis de competencia</li>
+          <li>· Definición de pilares de contenido</li>
+          <li>· Calendario editorial mensual</li>
+          <li>· KPIs y métricas de éxito</li>
+        </ul>
+      </div>
+      <div class="process-card" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+        <div class="display text-[clamp(3rem,7vw,6rem)] mb-4" style="color:var(--accent)">02.</div>
+        <h3 class="display text-2xl md:text-3xl mb-4">PRODUCCIÓN</h3>
+        <p class="text-base md:text-lg leading-relaxed mb-5">Generamos todo el contenido usando IA de última generación, garantizando calidad profesional y consistencia visual.</p>
+        <ul class="space-y-2 text-sm md:text-base">
+          <li>· Freepik AI para fotografía hiperrealista</li>
+          <li>· Claude AI para copy y captions</li>
+          <li>· Canva para diseño de posts</li>
+          <li>· Edición y optimización final</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="sec" style="background:var(--ink);color:var(--cream);position:relative;overflow:hidden">
+  <div class="blob" style="background:#FF3B1F;top:-15vw;right:-15vw;opacity:.4"></div>
+  <div class="max-w-[1400px] mx-auto relative z-10">
+    <div class="mono mb-10 md:mb-14 flex items-center gap-3 opacity-80"><span style="color:var(--accent)">✦</span> 05 / CONTACT</div>
+    <div class="text-center">
+      <div class="giant">LET'S</div>
+      <div class="serif text-[clamp(3rem,14vw,14rem)]" style="color:var(--accent);line-height:.8">work</div>
+      <div class="giant">TOGETHER.</div>
+    </div>
+
+    <div class="mt-16 md:mt-24 grid md:grid-cols-3 gap-8 md:gap-12 items-start">
+      <div>
+        <div class="mono opacity-60 mb-3">EMAIL</div>
+        <a href="mailto:info@grotvisual.com" class="text-xl md:text-2xl display block mb-2">info@grotvisual.com</a>
+        <p class="text-sm opacity-70">Respondemos en menos de 24h.</p>
+      </div>
+      <div>
+        <div class="mono opacity-60 mb-3">SOCIAL</div>
+        <a href="https://instagram.com/grotvisual" target="_blank" class="text-xl md:text-2xl display block mb-2">@grotvisual</a>
+        <a href="file:///C:/Users/Martin/Desktop/portfolio/portfolio_grot_visual.html#" class="text-xl md:text-2xl display block mb-2 opacity-70">LinkedIn</a>
+        <p class="text-sm opacity-70">Contacto rápido por DM.</p>
+      </div>
+      <div class="md:text-right">
+        <div class="mono opacity-60 mb-3">START</div>
+        <a href="mailto:info@grotvisual.com?subject=Quiero%20empezar%20un%20proyecto%20con%20GROT%20VISUAL" class="magnetic"><span class="btn-primary"><span>Empezar proyecto</span><span class="arrow">→</span></span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between gap-3 md:gap-4 mono opacity-70 text-center md:text-left">
+    <div>© 2026 GROT VISUAL — TODOS LOS DERECHOS RESERVADOS</div>
+    <div>BUILT WITH AI · BUENOS AIRES, AR</div>
+  </div>
+</footer>
+
+<script>
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+const isTouch = window.matchMedia('(hover:none),(pointer:coarse)').matches;
+let mx=0,my=0,rx=0,ry=0,cursorActivated=false;
+if(!isTouch){
+  window.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    if(!cursorActivated){
+      cursorActivated=true;
+      dot.classList.add('is-active');
+      ring.classList.add('is-active');
+    }
+    dot.style.transform=`translate3d(${mx}px,${my}px,0) translate(-50%,-50%)`;
+  });
+  function loop(){
+    rx+=(mx-rx)*.18;ry+=(my-ry)*.18;
+    ring.style.transform=`translate3d(${rx}px,${ry}px,0) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  }loop();
+  document.querySelectorAll('a,button,.project-img,.pill,.reel-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
+  });
+}
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.to('[data-anim="hero"]',{y:'0%',duration:1.4,stagger:.12,ease:'expo.out',delay:.3});
+gsap.to('[data-fade]',{opacity:1,y:0,duration:1.2,stagger:.15,delay:1.1,ease:'power3.out'});
+
+gsap.utils.toArray('.reveal').forEach(el=>{
+  gsap.from(el,{opacity:0,y:60,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}});
+});
+gsap.utils.toArray('.ticker-row').forEach(row=>{
+  gsap.from(row.children,{opacity:0,y:30,stagger:.1,duration:.9,ease:'power3.out',scrollTrigger:{trigger:row,start:'top 88%'}});
+});
+gsap.utils.toArray('.svc-card').forEach(c=>{
+  gsap.from(c,{opacity:0,y:50,duration:1,ease:'power3.out',scrollTrigger:{trigger:c,start:'top 88%'}});
+});
+gsap.utils.toArray('.process-card').forEach(c=>{
+  gsap.from(c,{opacity:0,y:40,duration:1,ease:'power3.out',scrollTrigger:{trigger:c,start:'top 88%'}});
+});
+gsap.utils.toArray('.project-img').forEach(c=>{
+  gsap.from(c,{opacity:0,y:40,duration:.9,ease:'power3.out',scrollTrigger:{trigger:c,start:'top 92%'}});
+});
+gsap.utils.toArray('article .pn').forEach(p=>{
+  gsap.to(p,{y:-100,scrollTrigger:{trigger:p,start:'top bottom',end:'bottom top',scrub:1}});
+});
+
+if(!isTouch){
+  document.querySelectorAll('.magnetic').forEach(btn=>{
+    btn.addEventListener('mousemove',e=>{
+      const r=btn.getBoundingClientRect();
+      const x=(e.clientX-r.left-r.width/2)*.3;
+      const y=(e.clientY-r.top-r.height/2)*.3;
+      btn.style.transform=`translate(${x}px,${y}px)`;
+    });
+    btn.addEventListener('mouseleave',()=>btn.style.transform='translate(0,0)');
+  });
+}
+
+(function(){
+  const canvas=document.getElementById('webgl');
+  if(!canvas) return;
+  let renderer;
+  try{ renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true}); }
+  catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,1,.1,1000);
+  camera.position.z=3;
+
+  const geo=new THREE.PlaneGeometry(8,8,140,140);
+  const mat=new THREE.ShaderMaterial({
+    uniforms:{uTime:{value:0},uMouse:{value:new THREE.Vector2(0,0)}},
+    vertexShader:`
+      uniform float uTime; uniform vec2 uMouse; varying float vElev; varying vec2 vUv;
+      void main(){
+        vUv=uv;
+        vec3 p=position;
+        float n=sin(p.x*1.8+uTime*.5)*cos(p.y*1.8+uTime*.4)*.35;
+        n+=sin((p.x+p.y)*3.0+uTime)*.1;
+        float md=distance(uv,uMouse*.5+.5);
+        n+=smoothstep(.4,0.,md)*.3;
+        p.z+=n;
+        vElev=n;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
+      }`,
+    fragmentShader:`
+      varying float vElev; varying vec2 vUv;
+      void main(){
+        vec3 c1=vec3(.95,.23,.12);
+        vec3 c2=vec3(.24,.35,1.);
+        vec3 c3=vec3(.05,.05,.05);
+        vec3 col=mix(c3,c1,smoothstep(-.2,.4,vElev));
+        col=mix(col,c2,smoothstep(.1,.6,vElev)*.6);
+        float vig=smoothstep(1.2,.2,distance(vUv,vec2(.5)));
+        col*=vig;
+        gl_FragColor=vec4(col,1.);
+      }`
+  });
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.rotation.x=-.6;
+  scene.add(mesh);
+
+  function resize(){
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    if(w===0||h===0) return;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(canvas);resize();
+
+  const mouse={x:0,y:0};
+  window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-((e.clientY/window.innerHeight)*2-1)});
+
+  const clock=new THREE.Clock();
+  function tick(){
+    mat.uniforms.uTime.value=clock.getElapsedTime();
+    mat.uniforms.uMouse.value.x+=(mouse.x-mat.uniforms.uMouse.value.x)*.05;
+    mat.uniforms.uMouse.value.y+=(mouse.y-mat.uniforms.uMouse.value.y)*.05;
+    mesh.rotation.z=mat.uniforms.uMouse.value.x*.05;
+    renderer.render(scene,camera);
+    requestAnimationFrame(tick);
+  }tick();
+})();
+</script>
+
+
+</body></html>
